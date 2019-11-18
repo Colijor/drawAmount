@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>提现兑换</title>
+    <link rel="stylesheet" type="text/css" href="lib/bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" href="css/goDrawAmount.css">
+</head>
+<body>
+<div class="nv">
+    <span class="back"><img src="imgs/back.png" width="16">返回</span>
+    <span class="detail">兑换说明</span>
+</div>
+<div class="exchange">
+    <div class="myGrod">
+        <div class="title">我的金币：</div>
+        <div class="grodCoin">
+            <span class="grods">0</span>
+            <div class="grodTip">约0.0元</div>
+        </div>
+    </div>
+    <div class="grodExchange">
+        <div class="title">金币兑换：</div>
+        <div class="section_box">
+            <div class="section_column">
+                <div class="section section_borderColor" id="section1">
+                    <div class="tip1">微信</div>
+                    <div class="tip2">当天到账</div>
+                    <div class="section_content">
+                        <div class="money">1元</div>
+                        <div class="grod">需1,000金币</div>
+                    </div>
+                </div>
+                <div class="section" id="section2">
+                    <div class="section_content">
+                        <div class="money">10元</div>
+                        <div class="grod">需10,000金币</div>
+                    </div>
+                </div>
+            </div>
+            <div class="section_column">
+                <div class="section" id="section3">
+                    <div class="section_content">
+                        <div class="money">20元</div>
+                        <div class="grod">需20,000金币</div>
+                    </div>
+                </div>
+                <div class="section" id="section4">
+                    <div class="section_content">
+                        <div class="money">50元</div>
+                        <div class="grod">需50,000金币</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="point">
+        <h4>注意事项：</h4>
+        <p>1、提现申请将在24小时内审批到帐，如遇节假日时间顺延</p>
+        <p>2、因微信提现每日有额度上限，若遇到提示“今日额度已发完”，请次日再来兑换</p>
+        <p>3、最终解释权归红点点互动公司所有</p>
+    </div>
+    <div style="height: 70px;width: 100%;"></div>
+<!--底部导航-->
+<div class='bottomBtn'>
+    <button type="button" class="draw_btn" id="exchangeNow">立即兑换</button>
+</div>
+    <script src="lib/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="js/common.js"></script>
+    <script type="text/javascript" src="lib/alert.js"></script>
+    <script>
+        let urlParamInfo = urlParam();
+        let balance = urlParamInfo.balance;
+        let money = balance/1000;
+        if(balance){
+            $('.grods').text(balance);
+            $('.grodTip').text("约"+money+"元");
+        }
+        //选中兑换金额以分为单位传递
+        let selectedMoney = 1000;
+        let tipGrod = "1,000";
+        let tipMoney = "1元";
+        $('#section1').on("click",function () {
+            selectedMoney = 1000;
+            tipGrod = "1,000";
+            tipMoney = "1元";
+            $('#section1').addClass('section_borderColor');
+            $('#section2,#section3,#section4').removeClass('section_borderColor');
+        });
+        $('#section2').on("click",function () {
+            selectedMoney = 10000;
+            tipGrod = "10,000";
+            tipMoney = "10元";
+            $('#section2').addClass('section_borderColor');
+            $('#section1,#section3,#section4').removeClass('section_borderColor');
+        });
+        $('#section3').on("click",function () {
+            selectedMoney = 20000;
+            tipGrod = "20,000";
+            tipMoney = "20元";
+            $('#section3').addClass('section_borderColor');
+            $('#section1,#section2,#section4').removeClass('section_borderColor');
+        });
+        $('#section4').on("click",function () {
+            selectedMoney = 50000;
+            tipGrod = "50,000";
+            tipMoney = "50元";
+            $('#section4').addClass('section_borderColor');
+            $('#section1,#section2,#section3').removeClass('section_borderColor');
+        });
+        //返回我的个人中心
+        $(".back").click(function () {
+            window.location.href="myPage.html";
+        });
+        $('.back').confirm
+        // 获取用户信息（包括金币）
+        var userId = localStorage.getItem('id');
+        function getUserInfo() {
+            $.ajax({
+                type: "get",
+                contentType: 'application/json;charset=UTF-8',
+                dataType: "json",
+                url: 'https://game.hdiandian.com/wxbackstage/gzh/info/' + userId,
+                data: '',
+                async: false,
+                success: function (res) {
+                    if (res.code == 0) {
+                        balance = res.data.balance;
+                        money = balance/1000;
+                        $('.grods').text(balance);
+                        $('.grodTip').text("约"+money+"元");
+                    }
+                }
+            });
+        }
+
+        $('#exchangeNow').bind("click", function() {
+            let txt = "确定使用"+tipGrod+"金币兑换"+tipMoney+"吗？";
+            $.MsgBox.Confirm("温馨提示", txt, exchangeNow);
+        });
+        function exchangeNow(){
+            var openId = localStorage.getItem('openId');
+            if(money>=1){
+                $.ajax({
+                    type: "get",
+                    contentType: 'application/json;charset=UTF-8',
+                    dataType: "json",
+                    url: 'https://game.hdiandian.com/wxbackstage/gzh/cash_out',
+                    data: {
+                        "openid": openId,
+                        "money": selectedMoney
+                    },
+                    success: function (res) {
+                        alert(JSON.stringify(res));
+                        if(res.code == 0){
+                            getUserInfo();
+                            $.MsgBox.Alert('温馨提示','兑现成功！');
+                            //alert('兑现成功！');
+                        }
+                        if(res.code == -1){
+                            $.MsgBox.Alert('温馨提示','兑现失败！');
+                            //alert('兑现失败！');
+                        }
+                    }
+                });
+            }else{
+                $.MsgBox.Alert('温馨提示','金币不足，兑现失败！');
+                //alert("金币不足，兑现失败！");
+            }
+        }
+    </script>
+</body>
+</html>

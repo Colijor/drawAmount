@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>领取金币</title>
+    <link rel="stylesheet" href="css/drawAmount.css">
+    <link rel="stylesheet" type="text/css" href="lib/bootstrap/bootstrap.min.css">
+</head>
+<body>
+<div class="nv" onclick="comeBack();">
+    <span><img src="imgs/back.png" width="16">返回</span>
+</div>
+<div class="containers">
+    <img class="container_bg" src="imgs/qrcodeBg.png">
+    <div class="container_qrcode">
+        <img id='qrcode' src="imgs/qrcode.jpg">
+    </div>
+</div>
+    <script src="lib/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="js/common.js"></script>
+    <script>
+        let urlParamInfo = urlParam();
+        let qrcode = urlParamInfo.qrcode;
+        if(qrcode){
+            document.getElementById('qrcode').src = qrcode;
+        }
+
+        //返回首页
+        function comeBack(){
+            window.location.href="drawAmount.html";
+        }
+    </script>
+</body>
+</html>

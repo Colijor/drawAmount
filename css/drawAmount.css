@@ -1,0 +1,96 @@
+*{
+    margin: 0;
+    padding:0;
+    -webkit-tap-highlight-color:rgba(0,0,0,0);
+    -webkit-text-size-adjust:none;
+}
+html{
+    font-size:10px;
+}
+body{
+    background-color: #f5f5f5;
+    font-size: 1.2em;
+}
+.nv{width: 100%;height: 45px;border-bottom: 1px solid #ddd;padding: 0 10px;display: flex;align-items: center;}
+.content{
+    margin-bottom: 65px;
+    background-color: #fff;
+}
+.item:after{content: "";display: block;width: 95%;height: 1px;background: #ddd;position: absolute;bottom: 0;text-align: center}
+.content .item{
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-align:center;
+    -webkit-box-align:center;
+    box-align:center;
+    -webkit-align-items:center;
+    align-items:center;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+    position: relative;
+    padding: 10px 10px;
+    color: #333;
+    text-decoration: none;
+}
+.title{display: none;}
+.ticket_t1{font-size: 18px;}
+.ticket_t2{font-size: 16px;color: #a9a9a9;}
+
+.ticket_btn{
+    width: 80px;
+    padding: 4px;
+    border: 1px solid #FF6347;
+    border-radius: 50px;
+    background-color: #fff;
+    color: #FF6347;
+}
+/*.ticket_btn:hover{background-color: #32cd32;color: #fff;}*/
+
+.bottomBar{position: fixed;bottom: 0;width: 100%;display: flex;background-color: #fff;border-top: 1px solid #e6e6e6;}
+.barItem{flex: 1;text-align: center;line-height: 65px;position: relative}
+.barItem img{width: 32px;height: 32px;vertical-align: -5%;}
+.barItem span{position: absolute;top:18px;display:block;width: 100%;}
+.wd_text,.fuli_text{color: #bfbfbf;}
+
+/*领取成功特效*/
+.advert {
+    display: none;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    z-Index: 1;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+.drawSuccess{position: absolute;top: 45%;left: 50%;transform: translate(-50%,-50%);width: 280px;}
+.worthTip{position: absolute;top: 66px;left: 50%;transform: translateX(-50%);color: #ffff00;font-size: 24px;}
+.Tipimg{width: 280px;height: 300px;}
+.noData{position: absolute;top: 40%;left: 50%;transform: translateX(-50%);font-size: 16px;color: #dbdbdb;}
+
+/*我的页面样式*/
+.top{background-color: #FF6347;color: #fff;}
+.name{font-size: 24px;}
+.userInfo{padding: 20px 50px 0 50px;}
+#headUrl{width: 80px;height: 80px;margin-right: 10px;border-radius: 50%;}
+.amountInfo{height: 80px;display: flex;align-items: center;text-align: center;}
+.amountL,.amountC,.amountR{flex: 1;}
+.amountR img{width: 32px;height: 32px;}
+.myAmount,.exchange{font-size: 22px;}
+.myAmount2,.exchange2,.drawMoney{font-size: 16px;}
+
+/*二维码详情页*/
+.qrcode{display: none;}
+.container_bg {
+    width: 100%;
+    height: 80%;
+    display: block;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    padding: 0;
+}
+.container_qrcode img{position: absolute;width: 40%;height: 25%;top: 20%;left: 50%;transform: translateX(-50%);}

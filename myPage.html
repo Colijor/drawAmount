@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>我的</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <link rel="stylesheet" type="text/css" href="lib/bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/drawAmount.css">
+    <script src="lib/jquery-3.3.1.min.js"></script>
+    <script src="lib/bootstrap/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/common.js"></script>
+</head>
+<body>
+    <!--<div style="position: absolute;top: 40%;left: 50%;transform: translateX(-50%);color: #bfbfbf;font-size: 24px;">-->
+        <!--<p>暂不开放</p>-->
+    <!--</div>-->
+    <div class="top">
+        <div class="userInfo">
+            <img id="headUrl" src="imgs/youke.png"/>
+            <span class="name">游客</span>
+        </div>
+        <div class="amountInfo">
+            <div class="amountL">
+                <span class="myAmount">0</span><br/>
+                <span class="myAmount2">我的金币</span>
+            </div>
+            <div class="amountC">
+                <span class="exchange">0.0元</span><br/>
+                <span class="exchange2">可兑换</span>
+            </div>
+            <div class="amountR" onclick="withdraw();">
+                <img src="imgs/draw.png"><br/>
+                <span class="drawMoney">金币提现</span>
+            </div>
+        </div>
+    </div>
+
+    <!--底部导航-->
+    <div class='bottomBar'>
+        <div class='barItem' onclick='welfare();'>
+            <image id="fuli" src='imgs/welfare.png'/>
+            <span class="fuli_text">福利</span>
+        </div>
+        <div class='barItem' onclick='my();'>
+            <image id="wd" src='imgs/wd1.png'/>
+            <span class="wd_text" style="color:#ef470f;">我的</span>
+        </div>
+    </div>
+    <script type="text/javascript">
+        // 获取用户信息（包括金币）
+        let balance = '';
+        var userId = localStorage.getItem('id');
+        function getUserInfo() {
+            $.ajax({
+                type: "get",
+                contentType: 'application/json;charset=UTF-8',
+                dataType: "json",
+                url: 'https://game.hdiandian.com/wxbackstage/gzh/info/' + userId,
+                data: '',
+                async: false,
+                success: function (res) {
+                    if (res.code == 0) {
+                        balance = res.data.balance;
+                        document.getElementById('headUrl').src = res.data.url;
+                        $('.name').text(res.data.name);
+                        $('.myAmount').text(balance);
+                    }
+                }
+            });
+        }
+        getUserInfo();
+
+        function welfare() {
+            window.location.href="drawAmount.html";
+        }
+        function my() {
+            window.location.href="myPage.html";
+        }
+
+        function withdraw() {
+            window.location.href="goDrawAmount.html?balance="+balance;
+        }
+    </script>
+</body>
+</html>

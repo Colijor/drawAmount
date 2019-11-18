@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>领取福利</title>
+    <link rel="stylesheet" href="css/drawAmount.css">
+    <link rel="stylesheet" href="lib/dropload/dropload.css">
+    <link rel="stylesheet" type="text/css" href="lib/bootstrap/bootstrap.min.css">
+</head>
+<body>
+<!--领取成功特效-->
+<div class='advert'>
+    <div class="drawSuccess">
+        <div class="worthTip">+100</div>
+        <image class="Tipimg" src='imgs/success.png'></image>
+    </div>
+</div>
+
+<!--任务列表-->
+<div class="nv">
+    <img src="imgs/jingbi.png" width="24">
+    <span style="margin-left: 5px;font-size: 18px;">任务列表</span>
+</div>
+<div id="content" class="content">
+    <!--<div class='item'>-->
+        <!--<div class="ticket_left">-->
+            <!--<div class='ticket_t1'>关注【红点点交互】公众号任务</div>-->
+            <!--<div class='ticket_t2'>回复“666”领取金币</div>-->
+        <!--</div>-->
+        <!--<div class="ticket_right">-->
+            <!--<button type="button" class="ticket_btn" onclick="checkBtn('imgs/qrcode.jpg','红点点互动');">+100金币</button>-->
+        <!--</div>-->
+    <!--</div>-->
+    <!--<div class='item'>-->
+        <!--<div class="ticket_left">-->
+            <!--<image src="imgs/qrcode.jpg"></image>-->
+            <!--<div class="ticket">-->
+                <!--<span class='ticket_t1'>[高额奖励]500金币</span><br/>-->
+                <!--<span class='ticket_t2'>关注公众号后<br/>回复“666”领取</span>-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div class="ticket_right">-->
+            <!--<button type="button" class="ticket_btn" onclick="checkBtn('imgs/qrcode.jpg','红点点互动');">+100金币</button>-->
+        <!--</div>-->
+    <!--</div>-->
+</div>
+
+<!--底部导航-->
+<div class='bottomBar'>
+    <div class='barItem' onclick='welfare();'>
+        <image id="fuli" src='imgs/welfare1.png'/>
+        <span class="fuli_text" style="color: #ef470f;">福利</span>
+    </div>
+    <div class='barItem' onclick='my();'>
+        <image id="wd" src='imgs/wd.png'/>
+        <span class="wd_text">我的</span>
+    </div>
+</div>
+
+<script src="lib/jquery-3.3.1.min.js"></script>
+<script src="lib/dropload/dropload.min.js"></script>
+<script type="text/javascript" src="js/common.js"></script>
+<script type="text/javascript" src="js/WXauthorize.js"></script>
+<script>
+
+    // 底部按钮跳转
+    function welfare() {
+        window.location.href="drawAmount.html";
+    }
+    function my() {
+        window.location.href="myPage.html";
+    }
+
+    //领取成功提示
+    function skip(countdown,worth) {
+        $('.worthTip').text("+"+worth);
+        $('.advert').css("display","block");
+        var time1 = setInterval(function () {
+            countdown--;
+            if (countdown == 0) {
+                clearInterval(time1);
+                $('.advert').css("display","none");
+            }
+        },1000);
+    }
+
+    //分页获得订单信息
+    let counter = 0;
+    // 每页展示8个
+    let num = 8;
+    let pageStart = 0,pageEnd = 0;
+    let id = localStorage.getItem('id');
+    // 上拉加载数据(分页8个一页)
+    function loadMore() {
+        $('.content').dropload({
+            scrollArea: window,
+            loadDownFn: function (me) {
+                counter++;
+                var msg = {
+                    "id": id,
+                    "current": counter
+                };
+                $.ajax({
+                    type: "get",
+                    contentType: 'application/json;charset=UTF-8',
+                    dataType: "json",
+                    url: 'https://game.hdiandian.com/wxbackstage/gzh/recommends',
+                    data: msg,
+                    success: function (res) {
+                        var result = '';
+                        pageEnd = num * counter;
+                        pageStart = pageEnd - num;
+                        let data = res.data.data;
+                        let orders = data;
+                        for (let i = pageStart; i < pageEnd; i++) {
+                            result += `<div class='item'>
+                                        <div class="ticket_left">
+                                            <div style="display: none;" id="qrcode${orders[i].id}">${orders[i].qrcode}</div>
+                                            <div class="ticket">
+                                                <span class='ticket_t1'>关注【${orders[i].name}】公众号任务</span><br/>
+                                                <span class='ticket_t2'>回复“${orders[i].remark}”领取金币</span>
+                                            </div>
+                                        </div>
+                                        <div class="ticket_right">
+                                            <button type="button" class="ticket_btn" onclick='checkBtn(${orders[i].id});'>+${orders[i].worth}金币</button>
+                                        </div>
+                                      </div>`;
+                            if((i + 1) >= orders.length){
+                                // 锁定
+                                me.lock();
+                                // 无数据
+                                me.noData();
+                                break;
+                            }
+                        };
+                        $('#content').append(result);
+                        me.resetload();
+                    },
+                    error: function (xhr, type) {
+                        //alert('Ajax error!');
+                        // 即使加载出错，也得重置
+                        //me.lock();  // 锁定
+                        //me.noData(); // 无数据
+                        me.resetload();
+                    }
+                });
+            },
+            threshold : 50
+        });
+    }
+    loadMore();
+
+    // 领取按钮
+    function checkBtn(id) {
+        let qrcode = $('#qrcode'+id).text();
+        // //alert("请先长按识别二维码关注公众号后领取！");
+        window.location.href="codeDetail.html?qrcode="+qrcode;
+    }
+
+    //从第三方公众号链接跳过来，判断是否完成任务，完成任务重新加载任务列表
+    var missionId = $.getUrlParam('missionid') || '';
+    var openId = localStorage.getItem('openId') || '';
+    if(missionId && openId){
+        isfinish();
+    }
+    function isfinish() {
+        $.ajax({
+            url: 'https://game.hdiandian.com/wxbackstage/gzh/finish',
+            type: 'GET',
+            data: {"openid": openId,"missionId": missionId},
+            dataType: 'json',
+            contentType: 'application/json;charset=UTF-8',
+            success: function (res) {
+                if(res.code == 0){
+                    page = 0;
+                    skip(2,res.data);
+                    $('#content').empty();
+                    counter = 0;
+                    num = 8;
+                    pageStart = 0;
+                    pageEnd = 0;
+                    loadMore();
+                }
+                if(res.code == -1){
+                    alert(res.message);
+                }
+            }
+        })
+    }
+</script>
+</body>
+</html>
